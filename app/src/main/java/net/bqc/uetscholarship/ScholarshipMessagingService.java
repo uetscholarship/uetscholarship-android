@@ -32,15 +32,17 @@ public class ScholarshipMessagingService extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            Log.d(TAG, "Message Notification: " + remoteMessage.getNotification().getTitle()
+                    + " | " + remoteMessage.getNotification().getBody());
         }
 
-        sendNotification(remoteMessage.getNotification().getBody());
+        sendNotification(remoteMessage);
     }
 
-    private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    private void sendNotification(RemoteMessage remoteMessage) {
+        String link = remoteMessage.getData().get("link");
+        Intent intent = link == null ? new Intent(this, MainActivity.class)
+                : new Intent(Intent.ACTION_VIEW, Uri.parse(link));
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -48,16 +50,15 @@ public class ScholarshipMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.ic_launcher_background)
-                        .setContentTitle("FCM Message")
-                        .setContentText(messageBody)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle(remoteMessage.getNotification().getTitle())
+                        .setContentText(remoteMessage.getNotification().getBody())
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         notificationManager.notify(0, notificationBuilder.build());
     }
 }

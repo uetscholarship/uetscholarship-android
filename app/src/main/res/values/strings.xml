@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">UETScholarship</string>
+    <string name="app_name">UET Scholarship</string>
+    <string name="default_notification_channel_id" translatable="false">scholarship_default_channel</string>
 </resources>

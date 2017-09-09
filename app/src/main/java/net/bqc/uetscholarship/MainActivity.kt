@@ -1,23 +1,55 @@
 package net.bqc.uetscholarship
 
+import android.content.Intent
+import android.net.Uri
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.Toolbar
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Toast
-import com.google.firebase.messaging.FirebaseMessaging
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import com.shirwa.simplistic_rss.RssReader
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var listView : ListView
+    private lateinit var adapter : ArrayAdapter<NewsItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // setup listview
+        listView = findViewById<ListView>(R.id.news_list)
+        adapter = NewsAdapter(this, R.layout.list_item_layout)
+        GetNewsTask().execute("https://uet.vnu.edu.vn/category/tin-tuc/tin-sinh-vien/feed/")
+
+        listView.setOnItemClickListener { parent, view, position, id ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(adapter.getItem(position).link))
+            startActivity(intent)
+        }
+
         // setup toolbar
 //        val toolbar = findViewById<Toolbar>(R.id.toolbar)
 //        setSupportActionBar(toolbar)
     }
+
+    inner class GetNewsTask : AsyncTask<String, Void, String>() {
+        override fun doInBackground(vararg p0: String?): String {
+            val rssReader = RssReader(p0[0])
+            rssReader.items
+                    .map { NewsItem(it.title, it.description, it.link) }
+                    .forEach { adapter.add(it) }
+            return ""
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            adapter.notifyDataSetChanged()
+            listView.adapter = adapter
+        }
+    }
+
 
 //    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 //        when (item!!.itemId) {

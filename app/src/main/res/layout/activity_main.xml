@@ -7,18 +7,4 @@
     android:orientation="vertical"
     tools:context="net.bqc.uetscholarship.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/AppTheme" />
-
-    <Button
-        android:id="@+id/subscribeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Subscribe" />
 </LinearLayout>

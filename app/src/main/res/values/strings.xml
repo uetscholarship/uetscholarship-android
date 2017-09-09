@@ -2,4 +2,6 @@
     <string name="app_name">UET Scholarship</string>
     <string name="default_notification_channel_id" translatable="false">scholarship_default_channel</string>
     <string name="action_favorite">Subscribe</string>
+    <string name="msg_subscribed">Subscribed!</string>
+    <string name="scholarship_topic">scholarships</string>
 </resources>

@@ -7,32 +7,26 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import com.nispok.snackbar.Snackbar
+import com.nispok.snackbar.SnackbarManager
 import com.shirwa.simplistic_rss.RssReader
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverListener {
 
     companion object {
-        const val EXTRA_URL : String = "EXTRA_URL"
+        const val EXTRA_URL: String = "EXTRA_URL"
     }
 
-    private lateinit var progressDialog : ProgressDialog
-    private lateinit var listView : ListView
-    private lateinit var adapter : ArrayAdapter<NewsItem>
+    private lateinit var progressDialog: ProgressDialog
+    private lateinit var listView: ListView
+    private lateinit var adapter: ArrayAdapter<NewsItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // setup listview
-        listView = findViewById<ListView>(R.id.news_list)
-        adapter = NewsAdapter(this, R.layout.list_item_layout)
-        GetNewsTask().execute("https://uet.vnu.edu.vn/category/tin-tuc/tin-sinh-vien/feed/")
-
-        listView.setOnItemClickListener { parent, view, position, id ->
-            val intent = Intent(this, BrowserActivity::class.java)
-            intent.putExtra(EXTRA_URL, adapter.getItem(position).link)
-            startActivity(intent)
-        }
+        // check connection
+        checkConnection()
 
         // setup toolbar
 //        val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -60,6 +54,51 @@ class MainActivity : AppCompatActivity() {
             listView.adapter = adapter
             progressDialog.dismiss()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        UETScholarShipApp.getInstance().setConnectionListener(this@MainActivity)
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+        if (!isConnected) {
+            showConnectionError()
+        }
+        else {
+            doJob()
+        }
+    }
+
+    private fun checkConnection() {
+        val isConnected = ConnectionReceiver.isConnected()
+        if (!isConnected) {
+            showConnectionError()
+        }
+        else {
+            doJob()
+        }
+    }
+
+    private fun doJob() {
+        // setup list view
+        listView = findViewById<ListView>(R.id.news_list)
+        adapter = NewsAdapter(this, R.layout.list_item_layout)
+        GetNewsTask().execute("https://uet.vnu.edu.vn/category/tin-tuc/tin-sinh-vien/feed/")
+
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val intent = Intent(this, BrowserActivity::class.java)
+            intent.putExtra(EXTRA_URL, adapter.getItem(position).link)
+            startActivity(intent)
+        }
+    }
+
+    private fun showConnectionError() {
+        SnackbarManager.show(
+                Snackbar.with(applicationContext)
+                        .text("I need Internet connection :(")
+                        .duration(Snackbar.SnackbarDuration.LENGTH_INDEFINITE),
+                this@MainActivity)
     }
 
 

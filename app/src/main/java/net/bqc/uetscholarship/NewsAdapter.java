@@ -31,10 +31,7 @@ public class NewsAdapter extends ArrayAdapter<NewsItem> {
         NewsItem item = getItem(position);
         if (item != null) {
             TextView title = convertView.findViewById(R.id.tv_title);
-            TextView body = convertView.findViewById(R.id.tv_body);
-
             title.setText(item.getTitle());
-            body.setText(item.getBody());
         }
 
         return convertView;

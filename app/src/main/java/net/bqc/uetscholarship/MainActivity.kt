@@ -5,12 +5,15 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.shirwa.simplistic_rss.RssReader
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_URL : String = "EXTRA_URL"
+    }
 
     private lateinit var listView : ListView
     private lateinit var adapter : ArrayAdapter<NewsItem>
@@ -25,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         GetNewsTask().execute("https://uet.vnu.edu.vn/category/tin-tuc/tin-sinh-vien/feed/")
 
         listView.setOnItemClickListener { parent, view, position, id ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(adapter.getItem(position).link))
+            val intent = Intent(this, BrowserActivity::class.java)
+            intent.putExtra(EXTRA_URL, adapter.getItem(position).link)
             startActivity(intent)
         }
 

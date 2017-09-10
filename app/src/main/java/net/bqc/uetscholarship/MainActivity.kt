@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
     private lateinit var progressDialog: ProgressDialog
     private lateinit var listView: ListView
-    private lateinit var adapter: ArrayAdapter<NewsItem>
+    private var adapter: ArrayAdapter<NewsItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +44,13 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
             val rssReader = RssReader(p0[0])
             rssReader.items
                     .map { NewsItem(it.title, it.description, it.link) }
-                    .forEach { adapter.add(it) }
+                    .forEach { adapter!!.add(it) }
             return ""
         }
 
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
-            adapter.notifyDataSetChanged()
+            adapter!!.notifyDataSetChanged()
             listView.adapter = adapter
             progressDialog.dismiss()
         }
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
         if (!isConnected) {
             showConnectionError()
         }
-        else {
+        else if (adapter == null){
             doJob()
         }
     }
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
 
         listView.setOnItemClickListener { _, _, position, _ ->
             val intent = Intent(this, BrowserActivity::class.java)
-            intent.putExtra(EXTRA_URL, adapter.getItem(position).link)
+            intent.putExtra(EXTRA_URL, adapter!!.getItem(position).link)
             startActivity(intent)
         }
     }

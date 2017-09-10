@@ -12,7 +12,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -28,7 +27,9 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".BrowserActivity"></activity>
+        <activity
+            android:name=".BrowserActivity"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>

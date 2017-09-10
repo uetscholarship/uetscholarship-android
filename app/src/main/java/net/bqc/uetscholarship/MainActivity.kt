@@ -1,5 +1,6 @@
 package net.bqc.uetscholarship
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         const val EXTRA_URL : String = "EXTRA_URL"
     }
 
+    private lateinit var progressDialog : ProgressDialog
     private lateinit var listView : ListView
     private lateinit var adapter : ArrayAdapter<NewsItem>
 
@@ -38,6 +40,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class GetNewsTask : AsyncTask<String, Void, String>() {
+
+        override fun onPreExecute() {
+            progressDialog = ProgressDialog.show(this@MainActivity,
+                    "Loading", "Loading data from server...", true)
+        }
+
         override fun doInBackground(vararg p0: String?): String {
             val rssReader = RssReader(p0[0])
             rssReader.items
@@ -50,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             super.onPostExecute(result)
             adapter.notifyDataSetChanged()
             listView.adapter = adapter
+            progressDialog.dismiss()
         }
     }
 

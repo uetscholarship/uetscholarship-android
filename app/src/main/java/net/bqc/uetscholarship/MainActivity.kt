@@ -5,8 +5,12 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
+import com.google.firebase.messaging.FirebaseMessaging
 import com.nispok.snackbar.Snackbar
 import com.nispok.snackbar.SnackbarManager
 import com.shirwa.simplistic_rss.RssReader
@@ -102,19 +106,19 @@ class MainActivity : AppCompatActivity(), ConnectionReceiver.ConnectionReceiverL
     }
 
 
-//    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-//        when (item!!.itemId) {
-//            R.id.action_favorite -> {
-//                FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.scholarship_topic))
-//                Toast.makeText(this, getString(R.string.msg_subscribed), Toast.LENGTH_LONG).show()
-//                return true
-//            }
-//        }
-//        return true
-//    }
-//
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.main_menu, menu)
-//        return true
-//    }
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item!!.itemId) {
+            R.id.action_favorite -> {
+                FirebaseMessaging.getInstance().subscribeToTopic(getString(R.string.scholarship_topic))
+                Toast.makeText(this, getString(R.string.msg_subscribed), Toast.LENGTH_LONG).show()
+                return true
+            }
+        }
+        return true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
 }
